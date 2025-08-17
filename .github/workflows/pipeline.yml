@@ -1,20 +1,20 @@
-name: Week 2 MLS pipeline
+name: MLOps pipeline
 
 on:
-  workflow_dispatch:
-
+  push:
+    branches:
+      - main  # Automatically triggers on push to the main branch
 jobs:
-
   register-dataset:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        run: pip install -r week_2_mls/requirements.txt
+        run: pip install -r "01) MLOPS/requirements.txt"
       - name: Upload Dataset to Hugging Face Hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python week_2_mls/model_building/data_register.py
+        run: python "01) MLOPS/02) Model Building/data_register.py"
 
   data-prep:
     needs: register-dataset
@@ -22,11 +22,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        run: pip install -r week_2_mls/requirements.txt
+        run: pip install -r  "01) MLOPS/requirements.txt"
       - name: Run Data Preparation
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python week_2_mls/model_building/prep.py
+        run: python "01) MLOPS/02) Model Building/prep.py"
 
 
   model-traning:
@@ -35,12 +35,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        run: pip install -r week_2_mls/requirements.txt
+        run: pip install -r  "01) MLOPS/requirements.txt"
+      - name: Start MLflow Server
+        run: |
+          nohup mlflow ui --host 0.0.0.0 --port 5000 &  # Run MLflow UI in the background
+          sleep 5  # Wait for a moment to let the server start
       - name: Model Building
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python week_2_mls/model_building/train.py
-
+        run: python "01) MLOPS/02) Model Building/train.py"
 
   deploy-hosting:
     runs-on: ubuntu-latest
@@ -48,8 +51,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        run: pip install -r week_2_mls/requirements.txt
+        run: pip install -r "01) MLOPS/requirements.txt"
       - name: Push files to Frontend Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python week_2_mls/hosting/hosting.py
+        run: python "01) MLOPS/04) Hosting/hosting.py"
