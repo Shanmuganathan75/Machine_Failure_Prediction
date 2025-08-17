@@ -36,10 +36,10 @@ ytest = pd.read_csv(ytest_path)
 # One-hot encode 'Type' and scale numeric features
 numeric_features = [
     'Air temperature',
-    'Process_temperature',
-    'Rotational_speed',
+    'Process temperature',
+    'Rotational speed',
     'Torque',
-    'Tool_wear'
+    'Tool wear'
 ]
 categorical_features = ['Type']
 
