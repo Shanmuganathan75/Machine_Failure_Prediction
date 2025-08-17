@@ -35,7 +35,7 @@ ytest = pd.read_csv(ytest_path)
 
 # One-hot encode 'Type' and scale numeric features
 numeric_features = [
-    'Air_temperature',
+    'Air temperature',
     'Process_temperature',
     'Rotational_speed',
     'Torque',
